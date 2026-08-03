@@ -1,0 +1,18 @@
+{
+  "name": "fund-region-allocation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Extract and visualize QDII fund geographic allocations from periodic reports.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.16"
+  },
+  "scripts": {
+    "generate": "node scripts/run-pipeline.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "pdfjs-dist": "5.4.624",
+    "sharp": "0.35.3"
+  }
+}
