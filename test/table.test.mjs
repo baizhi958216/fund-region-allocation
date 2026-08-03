@@ -20,6 +20,34 @@ test("parses a country allocation table", () => {
   });
 });
 
+test("parses explicit no-equity-holdings statement", () => {
+  const text = `
+3.2 报告期末在各个国家（地区）证券市场的股票及存托凭证投资分布
+本基金本报告期末未持有股票及存托凭证。
+`;
+  assert.deepEqual(parseTable(text), {
+    rows: [],
+    total: 0,
+    footnote: "",
+  });
+});
+
+test("parses allocation table without explicit total row", () => {
+  const text = `
+5.2 报告期末在各个国家（地区）证券市场的股票及存托凭证投资分布
+国家（地区） 公允价值（人民币元） 占基金资产净值比例（％）
+中国香港 87,416,587.06 3.50
+5.3 报告期末按行业分类的股票及存托凭证投资组合
+行业类别 公允价值（人民币元） 占基金资产净值比例（％）
+科技 58,273,225.62 2.33
+`;
+  assert.deepEqual(parseTable(text), {
+    rows: [["中国香港", 3.50]],
+    total: 3.50,
+    footnote: "",
+  });
+});
+
 test("rejects inconsistent allocation evidence", () => {
   const errors = validate([{
     code: "000000",

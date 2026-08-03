@@ -61,8 +61,15 @@ export function parseTable(text) {
   let footnote = "";
   for (const rawLine of lines.slice(start + 1)) {
     const line = rawLine.trim();
-    if (line.replace(/\s+/g, "").startsWith("注：") && rows.length) {
+    const compact = line.replace(/\s+/g, "");
+    if (compact.includes("未持有股票")) {
+      return { rows: [], total: 0, footnote: "" };
+    }
+    if (compact.startsWith("注：") && rows.length) {
       footnote = line;
+      break;
+    }
+    if (rows.length && (compact.includes("按行业分类") || compact.includes("期末按") || /^(?:§\s*)?\d+\.\d+/.test(compact))) {
       break;
     }
     const match = /(-?\d+(?:\.\d+)?)\s*$/.exec(line);
@@ -78,7 +85,10 @@ export function parseTable(text) {
     if (["占基金", "资产净值", "比例"].some((token) => country.includes(token))) continue;
     rows.push([country, percent]);
   }
-  return rows.length && total !== null ? { rows, total, footnote } : null;
+  if (total === null && rows.length > 0) {
+    total = Number(rows.reduce((sum, [, p]) => sum + p, 0).toFixed(4));
+  }
+  return (rows.length || total === 0) && total !== null ? { rows, total, footnote } : null;
 }
 
 async function extractPageTexts(pdfPath) {

@@ -25,7 +25,7 @@ Fund Region Allocation 把这套工作交给 AI：你只需要说出报告期和
     <img src="assets/preview-2026Q2.png" width="760" alt="2026Q2 QDII 主动基金地域配置图">
   </a>
   <br>
-  <sub>16 只 QDII 主动基金 · 2026Q2</sub>
+  <sub>23 只 QDII 主动基金 · 2026Q2</sub>
 </div>
 
 ## Install
@@ -80,17 +80,21 @@ AI 会自动完成：
 
 ## Default Funds
 
-默认基金池来自最初的对比需求，每只基金只保留一个代表份额，避免 A/C 类和人民币/美元份额重复。
+默认基金池采用以下 23 只持有美股的 QDII 基金，每只基金只保留一个代表份额，避免 A/C 类和人民币/美元份额重复。
 
 <table>
-<tr><td>01 · 银华海外数字</td><td>09 · 天弘全球新能源车</td></tr>
-<tr><td>02 · 华宝致远</td><td>10 · 易方达全球成长精选</td></tr>
-<tr><td>03 · 长城全球新能源车</td><td>11 · 易方达全球配置</td></tr>
-<tr><td>04 · 浦银安盛全球智能</td><td>12 · 嘉实全球产业升级</td></tr>
-<tr><td>05 · 国富全球科技互联</td><td>13 · 天弘全球高端制造</td></tr>
-<tr><td>06 · 华夏移动互联</td><td>14 · 易方达全球优质企业</td></tr>
-<tr><td>07 · 建信新兴市场</td><td>15 · 富国全球科技互联网</td></tr>
-<tr><td>08 · 广发全球精选</td><td>16 · 华夏全球科技先锋</td></tr>
+<tr><td>01 · 富国全球科技互联网股票</td><td>02 · 嘉实全球互联网股票</td></tr>
+<tr><td>03 · 工银全球精选股票</td><td>04 · 华夏全球股票QDII</td></tr>
+<tr><td>05 · 华夏全球科技先锋</td><td>06 · 汇添富全球移动互联</td></tr>
+<tr><td>07 · 富国全球消费精选</td><td>08 · 华夏移动互联混合QDII</td></tr>
+<tr><td>09 · 广发全球精选股票</td><td>10 · 工银全球股票</td></tr>
+<tr><td>11 · 银华全球新能源车</td><td>12 · 创金合信全球医药生物</td></tr>
+<tr><td>13 · 易方达全球成长精选</td><td>14 · 银华海外数字</td></tr>
+<tr><td>15 · 华宝致远</td><td>16 · 长城全球新能源车</td></tr>
+<tr><td>17 · 浦银安盛全球智能</td><td>18 · 国富全球科技互联</td></tr>
+<tr><td>19 · 建信新兴市场</td><td>20 · 天弘全球新能源车</td></tr>
+<tr><td>21 · 易方达全球配置</td><td>22 · 嘉实全球产业升级</td></tr>
+<tr><td>23 · 天弘全球高端制造</td><td></td></tr>
 </table>
 
 完整代码与名称位于 [`assets/funds.json`](assets/funds.json)。需要其他基金时，把清单交给 AI 即可。
@@ -107,7 +111,7 @@ AI 会自动完成：
 
 ## Automation
 
-每次推送 Tag，GitHub Actions 会为默认 16 只基金自动生成产物，并同时发布为 Actions Artifact 和 GitHub Release Assets。
+每次推送 Tag，GitHub Actions 会为默认 23 只基金自动生成产物，并同时发布为 Actions Artifact 和 GitHub Release Assets。
 
 ```bash
 git tag -s 2026Q3 -m "Generate 2026Q3 fund allocation"

@@ -10,7 +10,6 @@ import { ensureDirectory, readJson, writeJson } from "./lib/files.mjs";
 
 const CATEGORIES = ["美国", "中国", "中国香港", "韩国", "日本", "其他", "现金及其他"];
 const WIDTH = 1080;
-const HEIGHT = 1440;
 
 function escapeXml(value) {
   return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
@@ -34,14 +33,20 @@ function csvCell(value) {
 }
 
 function createSvg(rows, style, referenceLabel) {
+  const rowStart = 260;
+  const rowGap = 64;
+  const barHeight = 42;
+  const footnoteY = rowStart + rows.length * rowGap + 20;
+  const height = footnoteY + 45;
+
   const background = "#F7F2E7";
   const ink = "#153B43";
   const muted = "#52666B";
   const period = rows[0].period;
   const reportDate = rows[0].report_date;
   const parts = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">`,
-    `<rect width="${WIDTH}" height="${HEIGHT}" fill="${background}"/>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}">`,
+    `<rect width="${WIDTH}" height="${height}" fill="${background}"/>`,
     svgText(55, 82, `${style.title} | ${period}`, 45, ink, 700),
     svgText(57, 128, `${style.subtitle}  |  数据来源：基金${period.slice(0, 4)}年第${period.at(-1)}季度报告`, 22, "#344C52"),
     '<rect x="56" y="147" width="236" height="41" rx="8" fill="#E9E5D9"/>',
@@ -60,9 +65,6 @@ function createSvg(rows, style, referenceLabel) {
 
   const chartX = 320;
   const chartWidth = 700;
-  const rowStart = 260;
-  const rowGap = 66;
-  const barHeight = 42;
   rows.forEach((row, rowIndex) => {
     const rank = rowIndex + 1;
     const y = rowStart + rowIndex * rowGap;
@@ -82,7 +84,7 @@ function createSvg(rows, style, referenceLabel) {
     }
   });
   const footnote = "注：地域占比取报告‘按国家（地区）分类’表；灰色为100%减去股票地域合计，包含现金及其他非股票项目。";
-  parts.push(svgText(56, 1390, footnote, 17, "#63757A"));
+  parts.push(svgText(56, footnoteY, footnote, 17, "#63757A"));
   parts.push("</svg>");
   return parts.join("\n");
 }
