@@ -22,19 +22,22 @@ jobs:
 
     steps:
       - name: Check out tagged revision
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
         with:
-          python-version: "3.12"
-          cache: pip
+          node-version: "24"
+          cache: npm
 
       - name: Install dependencies
-        run: python -m pip install --disable-pip-version-check -r requirements.txt
+        run: npm ci
 
-      - name: Check Python sources
-        run: python -m py_compile scripts/*.py
+      - name: Run tests
+        run: npm test
+
+      - name: Install Chinese fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
 
       - name: Select reporting period
         id: period
@@ -48,7 +51,7 @@ jobs:
 
       - name: Generate allocation outputs
         run: |
-          python scripts/run_pipeline.py \
+          node scripts/run-pipeline.mjs \
             --period "${{ steps.period.outputs.value }}" \
             --output-dir outputs \
             --reference-label
