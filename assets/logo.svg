@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Fund Region Allocation">
-  <rect width="120" height="120" rx="28" fill="#F7F2E7"/>
-  <circle cx="57" cy="52" r="32" fill="#E8EFEC" stroke="#07546B" stroke-width="4"/>
-  <path d="M25 52h64M57 20c-11 9-17 20-17 32s6 23 17 32M57 20c11 9 17 20 17 32S68 75 57 84" fill="none" stroke="#139482" stroke-width="3" stroke-linecap="round"/>
-  <path d="M31 36h52M31 68h52" fill="none" stroke="#139482" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
-  <rect x="73" y="70" width="10" height="25" rx="3" fill="#F4AA27"/>
-  <rect x="87" y="58" width="10" height="37" rx="3" fill="#F26728"/>
-  <rect x="101" y="43" width="10" height="52" rx="3" fill="#07546B"/>
-</svg>

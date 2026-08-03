@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/logo.svg" width="112" alt="Fund Region Allocation" />
+  <img src="assets/logo.png" width="112" alt="Fund Region Allocation" />
   <h1>Fund Region Allocation</h1>
-  <p><b>把基金季报，变成一张可复核的地域配置图。</b></p>
+  <p><b>基金季报地域配置图</b></p>
   <a href="https://github.com/baizhi958216/fund-region-allocation/stargazers"><img src="https://img.shields.io/github/stars/baizhi958216/fund-region-allocation?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/baizhi958216/fund-region-allocation/releases"><img src="https://img.shields.io/github/v/tag/baizhi958216/fund-region-allocation?label=release&style=flat-square" alt="Release"></a>
   <a href="https://github.com/baizhi958216/fund-region-allocation/actions/workflows/generate-release.yml"><img src="https://img.shields.io/github/actions/workflow/status/baizhi958216/fund-region-allocation/generate-release.yml?style=flat-square&label=release" alt="Release workflow"></a>
@@ -10,7 +10,7 @@
 
 ## Why
 
-QDII 季报里有地域配置，但它藏在十几页 PDF 的表格里。手工查 16 只基金、统一国家口径、核对比例、重新排序再画图，重复又容易错。
+QDII 季报里有地域配置，但它藏在十几页 PDF 的表格里。手工查基金、统一国家口径、核对比例、重新排序再画图，重复又容易错。
 
 Fund Region Allocation 把这套工作交给 AI：用户只说报告期和基金范围，Skill 自动寻找公开报告、提取地域配置、执行一致性校验，并交付可继续编辑的图片和证据数据。
 
@@ -49,7 +49,7 @@ git -C ~/.codex/skills/fund-region-allocation pull --ff-only
 
 Skill 从自然语言请求触发，不需要记命令。可以直接说：
 
-- `生成这 16 只基金最新一期的地域配置总结图`
+- `生成基金最新一期的地域配置总结图`
 - `抓取 2026Q2 的基金地域配置，按美国仓位从高到低排序`
 - `把基金池换成下面这些代码，再输出 PNG、SVG 和 CSV`
 - `核对这张地域配置图与基金季报是否一致`
@@ -63,7 +63,7 @@ Skill 从自然语言请求触发，不需要记命令。可以直接说：
 
 AI 会自动完成：
 
-1. 选择 16 只基金共同可用的最新报告期，或使用用户指定季度。
+1. 选择默认的基金共同可用的最新报告期，或使用用户指定季度。
 2. 下载公开披露的季度报告并定位国家/地区配置表。
 3. 统一地域口径，保留原始表格行、报告页码和 PDF 地址。
 4. 校验明细合计、报告合计和最终图表是否一致。
