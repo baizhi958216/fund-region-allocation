@@ -13,8 +13,6 @@ Extract the periodic-report table headed `报告期末在各个国家（地区�
 - `日本` -> `日本`
 - Every other reported country or region -> `其他`
 
-Keep `中国台湾` in `其他` to match the supplied chart's grouping convention.
-
 Use exact matching after removing whitespace. Do not classify `中国香港` as `中国`.
 
 ## Residual
