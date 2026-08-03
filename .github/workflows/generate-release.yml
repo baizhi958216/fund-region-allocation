@@ -1,0 +1,89 @@
+name: Generate fund allocation release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  actions: read
+  artifact-metadata: write
+
+concurrency:
+  group: fund-allocation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate charts and release assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out tagged revision
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Check Python sources
+        run: python -m py_compile scripts/*.py
+
+      - name: Select reporting period
+        id: period
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_NAME}" =~ ([0-9]{4}Q[1-4]) ]]; then
+            echo "value=${BASH_REMATCH[1]}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "value=latest" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Generate allocation outputs
+        run: |
+          python scripts/run_pipeline.py \
+            --period "${{ steps.period.outputs.value }}" \
+            --output-dir outputs \
+            --reference-label
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fund-region-allocation-${{ github.ref_name }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            outputs/*.png
+            outputs/*.svg
+            outputs/*.csv
+            outputs/*-evidence.json
+
+      - name: Publish GitHub Release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mapfile -t assets < <(
+            find outputs -maxdepth 1 -type f \
+              \( -name '*.png' -o -name '*.svg' -o -name '*.csv' -o -name '*-evidence.json' \) \
+              -print | sort
+          )
+          if (( ${#assets[@]} == 0 )); then
+            echo "No release assets were generated" >&2
+            exit 1
+          fi
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" "${assets[@]}" --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" "${assets[@]}" \
+              --verify-tag \
+              --generate-notes \
+              --title "Fund region allocation ${GITHUB_REF_NAME}"
+          fi
