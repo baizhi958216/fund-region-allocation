@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="assets/logo.png" width="300" alt="Fund Region Allocation logo">
   <h1>Fund Region Allocation</h1>
   <p><b>基金季报地域配置图</b></p>
   <a href="https://github.com/baizhi958216/fund-region-allocation/stargazers"><img src="https://img.shields.io/github/stars/baizhi958216/fund-region-allocation?style=flat-square" alt="Stars"></a>
