@@ -1,5 +1,7 @@
 # Fund Region Allocation
 
+[![Generate fund allocation release](https://github.com/baizhi958216/fund-region-allocation/actions/workflows/generate-release.yml/badge.svg)](https://github.com/baizhi958216/fund-region-allocation/actions/workflows/generate-release.yml)
+
 从中国公募基金定期报告中提取 QDII 基金的国家/地区配置，自动校验数据，并生成按美国股票占基金净值比例排序的对比图。
 
 这个仓库既可以作为 Codex Skill 使用，也可以作为独立的 Python 命令行工具运行。
@@ -24,7 +26,7 @@ git clone https://github.com/baizhi958216/fund-region-allocation.git \
 安装 Python 依赖：
 
 ```bash
-python3 -m pip install pdfplumber Pillow
+python3 -m pip install -r ~/.codex/skills/fund-region-allocation/requirements.txt
 ```
 
 重新打开 Codex 任务后，可以这样调用：
@@ -41,7 +43,7 @@ Skill 的触发说明和完整工作流位于 [`SKILL.md`](SKILL.md)。
 ```bash
 git clone https://github.com/baizhi958216/fund-region-allocation.git
 cd fund-region-allocation
-python3 -m pip install pdfplumber Pillow
+python3 -m pip install -r requirements.txt
 
 python3 scripts/run_pipeline.py \
   --period 2026Q2 \
@@ -53,7 +55,7 @@ python3 scripts/run_pipeline.py \
 
 | 参数 | 说明 |
 | --- | --- |
-| `--period` | 报告期，格式为 `YYYYQ1` 至 `YYYYQ4` |
+| `--period` | 报告期，格式为 `YYYYQ1` 至 `YYYYQ4`；使用 `latest` 自动选择所有基金共同可用的最新季度 |
 | `--output-dir` | 图片、表格和证据文件的输出目录 |
 | `--work-dir` | 可选，PDF 和中间数据目录；默认位于输出目录的 `.work` |
 | `--reference-label` | 可选，将图中的灰色剩余项显示为“现金”，以匹配参考图样式 |
@@ -89,6 +91,27 @@ outputs/
 
 修改或增加基金后，重新运行流水线即可。
 
+## Tag 自动生成与发布
+
+仓库内置 GitHub Actions。每次向 GitHub 推送任意 Tag，工作流都会：
+
+1. 安装固定范围内的 Python 依赖并检查脚本语法。
+2. 为默认的 16 只基金下载和解析季度报告。
+3. 生成 PNG、SVG、CSV 和证据 JSON。
+4. 上传一份保留 30 天的 Actions Artifact。
+5. 创建对应的 GitHub Release，并将四类文件作为 Release Assets 发布。
+
+推荐使用带报告期的 GPG 签名 Tag：
+
+```bash
+git tag -s 2026Q2 -m "Generate 2026Q2 fund allocation"
+git push origin 2026Q2
+```
+
+Tag 名包含 `YYYYQn` 时，工作流生成该季度，例如 `2026Q2` 或 `v2026Q2`。Tag 名不包含报告期时，例如 `v1.0.0`，工作流会选择 16 只基金共同可用的最新季度，避免不同基金混用报告期。
+
+工作流定义见 [`.github/workflows/generate-release.yml`](.github/workflows/generate-release.yml)。创建 Release 所需的权限只在工作流内设置，不需要额外的个人访问令牌。
+
 ## 数据口径
 
 程序提取定期报告中的：
@@ -122,7 +145,10 @@ outputs/
 
 ```text
 fund-region-allocation/
+├── .github/workflows/generate-release.yml
 ├── SKILL.md
+├── README.md
+├── requirements.txt
 ├── agents/openai.yaml
 ├── assets/
 │   ├── funds.json
