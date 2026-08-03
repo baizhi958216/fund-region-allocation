@@ -1,0 +1,4 @@
+interface:
+  display_name: "基金地域配置图"
+  short_description: "从基金定期报告提取地域配置并生成可复核的排名对比图表"
+  default_prompt: "使用 $fund-region-allocation 抓取指定报告期的基金地域配置，校验数据并生成总结图片和证据表。"
