@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { writeFile } from "node:fs/promises";
+import https from "node:https";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -13,16 +14,47 @@ const REQUEST_HEADERS = {
   "User-Agent": "Mozilla/5.0 fund-region-allocation/1.0",
 };
 
-async function request(url, options = {}) {
-  const response = await fetch(url, { ...options, signal: AbortSignal.timeout(60_000) });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
-  return response;
+function requestOnce(url, headers, redirectsLeft = 5) {
+  return new Promise((resolve, reject) => {
+    const request = https.get(url, { headers, family: 4, timeout: 60_000 }, (response) => {
+      const status = response.statusCode ?? 0;
+      if (status >= 300 && status < 400 && response.headers.location && redirectsLeft > 0) {
+        response.resume();
+        resolve(requestOnce(new URL(response.headers.location, url), headers, redirectsLeft - 1));
+        return;
+      }
+      if (status < 200 || status >= 300) {
+        response.resume();
+        reject(new Error(`HTTP ${status}: ${url}`));
+        return;
+      }
+      const chunks = [];
+      response.on("data", (chunk) => chunks.push(chunk));
+      response.on("end", () => resolve(Buffer.concat(chunks)));
+      response.on("error", reject);
+    });
+    request.on("timeout", () => request.destroy(new Error(`request timed out: ${url}`)));
+    request.on("error", reject);
+  });
+}
+
+async function requestBuffer(url, headers) {
+  let lastError;
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    try {
+      return await requestOnce(url, headers);
+    } catch (error) {
+      lastError = error;
+      if (attempt < 4) await new Promise((resolve) => setTimeout(resolve, attempt * 1_000));
+    }
+  }
+  throw new Error(`request failed after 4 attempts: ${url}: ${lastError?.message}`, { cause: lastError });
 }
 
 async function announcementRows(fundCode) {
   const query = new URLSearchParams({ fundcode: fundCode, pageIndex: "1", pageSize: "50", type: "3" });
-  const response = await request(`${API}?${query}`, { headers: REQUEST_HEADERS });
-  const payload = await response.json();
+  const data = await requestBuffer(`${API}?${query}`, REQUEST_HEADERS);
+  const payload = JSON.parse(data.toString("utf8"));
   return payload.Data ?? [];
 }
 
@@ -31,8 +63,7 @@ async function fetchOne(fund, period, reportDirectory, rows) {
   if (!row) throw new Error(`${fund.code} ${fund.short_name}: report not found for ${period}`);
   const pdfUrl = `https://pdf.dfcfw.com/pdf/H2_${row.ID}_1.pdf`;
   const pdfPath = path.resolve(reportDirectory, `${fund.code}-${period}.pdf`);
-  const response = await request(pdfUrl, { headers: { "User-Agent": REQUEST_HEADERS["User-Agent"] } });
-  const data = Buffer.from(await response.arrayBuffer());
+  const data = await requestBuffer(pdfUrl, { "User-Agent": REQUEST_HEADERS["User-Agent"] });
   if (data.subarray(0, 4).toString("ascii") !== "%PDF") {
     throw new Error(`${fund.code}: downloaded content is not a PDF`);
   }
