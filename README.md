@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="assets/logo.png" width="112" alt="Fund Region Allocation" />
   <h1>Fund Region Allocation</h1>
   <p><b>基金季报地域配置图</b></p>
   <a href="https://github.com/baizhi958216/fund-region-allocation/stargazers"><img src="https://img.shields.io/github/stars/baizhi958216/fund-region-allocation?style=flat-square" alt="Stars"></a>
@@ -10,11 +9,11 @@
 
 ## Why
 
-QDII 季报里有地域配置，但它藏在十几页 PDF 的表格里。手工查基金、统一国家口径、核对比例、重新排序再画图，重复又容易错。
+QDII 季报十几页 PDF 的表格，手工查基金、统一国家口径、核对比例、重新排序再画图，重复又容易错。
 
-Fund Region Allocation 把这套工作交给 AI：用户只说报告期和基金范围，Skill 自动寻找公开报告、提取地域配置、执行一致性校验，并交付可继续编辑的图片和证据数据。
+Fund Region Allocation 把这套工作交给 AI：你只需要说出报告期和基金范围，Skill 自动寻找公开报告、提取地域配置，生成配置图片和证据数据。
 
-它不是根据前十大持仓做估算，也不让生成式图片模型“画”百分比。所有数字来自基金定期报告，最终图表由确定性代码渲染。
+所有数据来自基金定期报告。
 
 ## Showcase
 
@@ -25,7 +24,7 @@ Fund Region Allocation 把这套工作交给 AI：用户只说报告期和基金
     <img src="assets/preview-2026Q2.png" width="760" alt="2026Q2 QDII 主动基金地域配置图">
   </a>
   <br>
-  <sub>16 只 QDII 主动基金 · 2026Q2 · 按美国股票占基金净值比例排序</sub>
+  <sub>16 只 QDII 主动基金 · 2026Q2</sub>
 </div>
 
 ## Install
@@ -50,7 +49,7 @@ git -C ~/.codex/skills/fund-region-allocation pull --ff-only
 Skill 从自然语言请求触发，不需要记命令。可以直接说：
 
 - `生成基金最新一期的地域配置总结图`
-- `抓取 2026Q2 的基金地域配置，按美国仓位从高到低排序`
+- `抓取 2026Q2 的基金地域配置`
 - `把基金池换成下面这些代码，再输出 PNG、SVG 和 CSV`
 - `核对这张地域配置图与基金季报是否一致`
 
@@ -67,11 +66,9 @@ AI 会自动完成：
 2. 下载公开披露的季度报告并定位国家/地区配置表。
 3. 统一地域口径，保留原始表格行、报告页码和 PDF 地址。
 4. 校验明细合计、报告合计和最终图表是否一致。
-5. 输出图片、结构化数据与证据文件，并直接交付给用户。
+5. 输出图片、结构化数据与证据文件。
 
 ## Output
-
-每次生成都会得到四类可复核产物：
 
 | 文件 | 用途 |
 | --- | --- |
@@ -104,11 +101,6 @@ AI 会自动完成：
 ```text
 报告期末在各个国家（地区）证券市场的股票及存托凭证投资分布
 ```
-
-- **地域口径。** `中国`、`中国大陆`、`中国内地`合并为“中国”；`中国香港`单列；`中国台湾`按当前图表口径归入“其他”。
-- **灰色区域。** `现金及其他 = 100% - 股票地域配置合计`，可能包含现金、基金、债券、衍生品、应收项目和负债影响，并非严格意义上的现金。
-- **质量门槛。** 地域明细必须与报告合计一致，全部图表分段必须在容差范围内回到 100%，来源 URL 与页码不得缺失。
-- **失败原则。** 缺少报告、地域表或校验不通过时立即停止，不使用零值静默补齐，也不根据前十大持仓推算完整配置。
 
 详细分类规则见 [`references/allocation-rules.md`](references/allocation-rules.md)，来源优先级见 [`references/source-priority.md`](references/source-priority.md)。
 
