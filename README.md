@@ -21,7 +21,7 @@ Fund Region Allocation 把这套工作交给 AI：你只需要说出报告期和
 真实生成结果，数据截止 `2026-06-30`。点击图片查看对应 Release。
 
 <div align="center">
-  <a href="https://github.com/baizhi958216/fund-region-allocation/releases/tag/2026Q2-r3">
+  <a href="https://github.com/baizhi958216/fund-region-allocation/releases/tag/2026Q2-r4">
     <img src="assets/preview-2026Q2.png" width="760" alt="2026Q2 QDII 主动基金地域配置图">
   </a>
   <br>
