@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import os
 import pathlib
 import subprocess
 import sys
@@ -12,7 +11,7 @@ def run(*args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--period", required=True)
+    parser.add_argument("--period", required=True, help="YYYYQn or latest common quarter")
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--work-dir")
     parser.add_argument("--reference-label", action="store_true")

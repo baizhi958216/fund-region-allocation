@@ -24,6 +24,8 @@ Run the complete workflow:
 python scripts/run_pipeline.py --period 2026Q2 --output-dir OUTPUT_DIR
 ```
 
+Use `--period latest` to select the newest reporting quarter available for every configured fund. This prevents mixed-period charts when a release is triggered automatically.
+
 ## Safeguards
 
 - Never infer a full regional allocation from top holdings.
