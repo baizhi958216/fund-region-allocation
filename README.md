@@ -4,7 +4,7 @@
 
 从中国公募基金定期报告中提取 QDII 基金的国家/地区配置，自动校验数据，并生成按美国股票占基金净值比例排序的对比图。
 
-这个仓库既可以作为 Codex Skill 使用，也可以作为独立的 Python 命令行工具运行。
+这是一个以自然语言为入口的 Codex Skill。用户只需要告诉 Codex 基金、报告期和期望输出，Codex 会自动调用仓库中的 Node.js 模块完成抓取、解析、校验和制图。命令行仅用于开发与调试。
 
 ## 功能
 
@@ -23,29 +23,33 @@ git clone https://github.com/baizhi958216/fund-region-allocation.git \
   ~/.codex/skills/fund-region-allocation
 ```
 
-安装 Python 依赖：
-
-```bash
-python3 -m pip install -r ~/.codex/skills/fund-region-allocation/requirements.txt
-```
-
-重新打开 Codex 任务后，可以这样调用：
+重新打开 Codex 任务后直接使用自然语言调用，无需手动运行脚本：
 
 ```text
 使用 $fund-region-allocation 抓取这些基金的 2026Q2 地域配置，
 按美国占比排序，生成 PNG、SVG、CSV 和来源证据。
 ```
 
+也可以让 Skill 自动选择 16 只基金共同可用的最新季度：
+
+```text
+使用 $fund-region-allocation 生成最新一期基金地域配置总结图。
+```
+
+首次执行时，Codex 会在 Skill 目录内自动运行 `npm ci` 安装锁定依赖，后续无需重复安装。
+
 Skill 的触发说明和完整工作流位于 [`SKILL.md`](SKILL.md)。
 
-## 命令行使用
+## 开发与调试
+
+以下命令不是普通 Skill 用户的必需步骤，仅供本地开发和排查问题使用：
 
 ```bash
 git clone https://github.com/baizhi958216/fund-region-allocation.git
 cd fund-region-allocation
-python3 -m pip install -r requirements.txt
+npm ci
 
-python3 scripts/run_pipeline.py \
+node scripts/run-pipeline.mjs \
   --period 2026Q2 \
   --output-dir ./outputs \
   --reference-label
@@ -89,13 +93,13 @@ outputs/
 }
 ```
 
-修改或增加基金后，重新运行流水线即可。
+修改或增加基金后，让 Codex 重新生成即可；Codex 会自动执行完整流水线。
 
 ## Tag 自动生成与发布
 
 仓库内置 GitHub Actions。每次向 GitHub 推送任意 Tag，工作流都会：
 
-1. 安装固定范围内的 Python 依赖并检查脚本语法。
+1. 使用 `package-lock.json` 安装锁定的 Node.js 依赖并运行测试。
 2. 为默认的 16 只基金下载和解析季度报告。
 3. 生成 PNG、SVG、CSV 和证据 JSON。
 4. 上传一份保留 30 天的 Actions Artifact。
@@ -148,7 +152,8 @@ fund-region-allocation/
 ├── .github/workflows/generate-release.yml
 ├── SKILL.md
 ├── README.md
-├── requirements.txt
+├── package.json
+├── package-lock.json
 ├── agents/openai.yaml
 ├── assets/
 │   ├── funds.json
@@ -156,12 +161,16 @@ fund-region-allocation/
 ├── references/
 │   ├── allocation-rules.md
 │   └── source-priority.md
-└── scripts/
-    ├── fetch_reports.py
-    ├── extract_allocations.py
-    ├── validate_data.py
-    ├── render_chart.py
-    └── run_pipeline.py
+├── scripts/
+    ├── lib/
+    ├── fetch-reports.mjs
+    ├── extract-allocations.mjs
+    ├── validate-data.mjs
+    ├── render-chart.mjs
+    └── run-pipeline.mjs
+└── test/
+    ├── period.test.mjs
+    └── table.test.mjs
 ```
 
 ## 注意事项
