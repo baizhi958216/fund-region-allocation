@@ -2,10 +2,7 @@
   <img src="assets/logo.png" width="300" alt="Fund Region Allocation logo">
   <h1>Fund Region Allocation</h1>
   <p><b>基金季报地域配置图</b></p>
-  <a href="https://github.com/baizhi958216/fund-region-allocation/stargazers"><img src="https://img.shields.io/github/stars/baizhi958216/fund-region-allocation?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/baizhi958216/fund-region-allocation/releases"><img src="https://img.shields.io/github/v/tag/baizhi958216/fund-region-allocation?label=release&style=flat-square" alt="Release"></a>
-  <a href="https://github.com/baizhi958216/fund-region-allocation/actions/workflows/generate-release.yml"><img src="https://img.shields.io/github/actions/workflow/status/baizhi958216/fund-region-allocation/generate-release.yml?style=flat-square&label=release" alt="Release workflow"></a>
-  <img src="https://img.shields.io/badge/Node.js-%E2%89%A520.16-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js 20.16+">
 </div>
 
 ## Why
