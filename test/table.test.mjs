@@ -16,7 +16,7 @@ test("parses a country allocation table", () => {
   assert.deepEqual(parseTable(text), {
     rows: [["美国", 87.89], ["中国香港", 2.55]],
     total: 90.44,
-    footnote: "",
+    footnote: "注：根据证券交易所确定。",
   });
 });
 
@@ -30,6 +30,23 @@ test("parses explicit no-equity-holdings statement", () => {
     total: 0,
     footnote: "",
   });
+});
+
+test("preserves multiline country notes across a page break without industry notes", () => {
+  const parsed = parseTable(`
+5.2 报告期末在各个国家（地区）证券市场的股票及存托凭证投资分布
+美国 100.00 80.00
+合计 100.00 80.00
+第 8 页 共 14 页
+示例基金 2026 年第 3 季度报告
+注：1、国家（地区）根据证券交易所确定。
+2、ADR、GDR 按挂牌交易所确定。
+5.3 报告期末按行业分类的股票及存托凭证投资组合
+合计 100.00 80.00
+注：行业分类说明。
+`);
+  assert.equal(parsed.footnote, "注：1、国家（地区）根据证券交易所确定。\n2、ADR、GDR 按挂牌交易所确定。");
+  assert.deepEqual(parsed.rows, [["美国", 80]]);
 });
 
 test("parses allocation table without explicit total row", () => {

@@ -15,15 +15,19 @@ Fund Region Allocation 把这套工作交给 AI：你只需要说出报告期和
 
 ## Showcase
 
-真实生成结果，数据截止 `2026-06-30`。点击图片查看对应 Release。
+最新生成结果为 `2026Q3`，覆盖默认 23 只基金，数据截止 `2026-09-30`。各基金使用同一报告期，地区明细与报告合计均已通过校验。点击图片查看对应 Release。
 
 <div align="center">
-  <a href="https://github.com/baizhi958216/fund-region-allocation/releases/tag/2026Q2-r4">
-    <img src="assets/preview-2026Q2.png" width="760" alt="2026Q2 QDII 主动基金地域配置图">
+  <a href="https://github.com/baizhi958216/fund-region-allocation/releases/tag/2026Q3">
+    <img src="assets/preview-2026Q3.png" width="760" alt="2026Q3 QDII 主动基金地域配置图">
   </a>
   <br>
-  <sub>23 只 QDII 主动基金 · 2026Q2</sub>
+  <sub>23 只 QDII 主动基金 · 2026Q3 · 数据截止 2026-09-30</sub>
 </div>
+
+本期下载：[PNG](https://github.com/baizhi958216/fund-region-allocation/releases/download/2026Q3/fund-region-allocation-2026Q3.png) · [SVG](https://github.com/baizhi958216/fund-region-allocation/releases/download/2026Q3/fund-region-allocation-2026Q3.svg) · [CSV](https://github.com/baizhi958216/fund-region-allocation/releases/download/2026Q3/fund-region-allocation-2026Q3.csv) · [JSON 来源证据](https://github.com/baizhi958216/fund-region-allocation/releases/download/2026Q3/fund-region-allocation-2026Q3-evidence.json)。证据文件保留报告标题、发布日期、PDF 链接、PDF 页码、原始地区比例与分类脚注；东方财富来源标记为报告检索镜像。
+
+灰色部分为“现金及其他”，即 100% 减去报告股票地区合计，并不等同于现金余额。图片中的比例四舍五入至整数，原始精度保存在 CSV 和 JSON 中。[2026Q2 历史版本](https://github.com/baizhi958216/fund-region-allocation/releases/tag/2026Q2-r4)仍可下载。
 
 ## Install
 
@@ -47,7 +51,7 @@ git -C ~/.codex/skills/fund-region-allocation pull --ff-only
 Skill 从自然语言请求触发，不需要记命令。可以直接说：
 
 - `生成基金最新一期的地域配置总结图`
-- `抓取 2026Q2 的基金地域配置`
+- `抓取 2026Q3 的基金地域配置`
 - `把基金池换成下面这些代码，再输出 PNG、SVG 和 CSV`
 - `核对这张地域配置图与基金季报是否一致`
 
@@ -115,7 +119,7 @@ git tag -s 2026Q3 -m "Generate 2026Q3 fund allocation"
 git push origin 2026Q3
 ```
 
-Tag 包含 `YYYYQn` 时生成指定季度；普通版本 Tag 会选择所有基金共同可用的最新季度。工作流已经过 [`2026Q2-r3`](https://github.com/baizhi958216/fund-region-allocation/actions/runs/30830659269) 实际验证。
+Tag 包含 `YYYYQn` 时生成指定季度；普通版本 Tag 会选择所有基金共同可用的最新季度。工作流会先运行测试，再抓取报告、提取数据并校验，只有成功生成的 PNG、SVG、CSV 和 JSON 证据才会上传到该 Tag 的 Release。运行记录见 [GitHub Actions](https://github.com/baizhi958216/fund-region-allocation/actions/workflows/generate-release.yml)。
 
 ## Design
 
@@ -136,9 +140,8 @@ npm ci
 npm test
 
 node scripts/run-pipeline.mjs \
-  --period 2026Q2 \
-  --output-dir ./outputs \
-  --reference-label
+  --period 2026Q3 \
+  --output-dir ./outputs
 ```
 
 运行时要求 Node.js `20.16` 或更新版本。核心依赖锁定在 `package-lock.json`：PDF.js 负责 PDF 文本提取，Sharp 负责 SVG 到 PNG 的渲染。

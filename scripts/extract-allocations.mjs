@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
@@ -14,7 +13,7 @@ const COUNTRY_MAP = new Map([
   ["美国", "美国"], ["中国", "中国"], ["中国大陆", "中国"], ["中国内地", "中国"],
   ["中国香港", "中国香港"], ["香港", "中国香港"], ["韩国", "韩国"], ["日本", "日本"],
 ]);
-const STANDARD_FONT_DATA_URL = `${fileURLToPath(new URL("../node_modules/pdfjs-dist/standard_fonts/", import.meta.url))}${path.sep}`;
+const STANDARD_FONT_DATA_URL = `${fileURLToPath(new URL("../node_modules/pdfjs-dist/standard_fonts/", import.meta.url)).replaceAll("\\", "/").replace(/\/$/, "")}/`;
 
 function pageLines(items) {
   const lines = [];
@@ -88,10 +87,22 @@ export function parseTable(text) {
   if (total === null && rows.length > 0) {
     total = Number(rows.reduce((sum, [, p]) => sum + p, 0).toFixed(4));
   }
+  const sectionLines = [];
+  for (const line of lines.slice(start + 1)) {
+    const compact = line.replace(/\s+/g, "");
+    if (compact.includes("按行业分类") || /^(?:§\s*)?\d+\.\d+/.test(compact)) break;
+    sectionLines.push(line.trim());
+  }
+  const noteStart = sectionLines.findIndex((line) => /^注\s*[:：]/.test(line));
+  if (noteStart >= 0) {
+    footnote = sectionLines.slice(noteStart)
+      .filter((line) => line && !/^第?\s*\d+\s*页/.test(line) && !/^\d+$/.test(line) && !/季度报告/.test(line))
+      .join("\n");
+  }
   return (rows.length || total === 0) && total !== null ? { rows, total, footnote } : null;
 }
 
-async function extractPageTexts(pdfPath) {
+export async function extractPageTexts(pdfPath) {
   const data = new Uint8Array(await readFile(pdfPath));
   const pdf = await getDocument({ data, disableWorker: true, standardFontDataUrl: STANDARD_FONT_DATA_URL }).promise;
   const texts = [];
@@ -108,6 +119,7 @@ async function extractOne(item) {
   const texts = await extractPageTexts(item.pdf_path);
   let found = null;
   for (let index = 0; index < texts.length; index += 1) {
+    if (!texts[index].replace(/\s+/g, "").replaceAll("(", "（").replaceAll(")", "）").includes(TARGET_HEADING)) continue;
     const window = `${texts[index]}\n${texts[index + 1] ?? ""}`;
     const parsed = parseTable(window);
     if (parsed) {

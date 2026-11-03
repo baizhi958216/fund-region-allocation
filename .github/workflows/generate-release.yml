@@ -53,8 +53,7 @@ jobs:
         run: |
           node scripts/run-pipeline.mjs \
             --period "${{ steps.period.outputs.value }}" \
-            --output-dir outputs \
-            --reference-label
+            --output-dir outputs
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v7

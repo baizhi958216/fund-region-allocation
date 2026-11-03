@@ -63,8 +63,8 @@ function createSvg(rows, style, referenceLabel) {
     legendX += 27 + estimatedTextWidth(label, 17) + 28;
   }
 
-  const chartX = 320;
-  const chartWidth = 700;
+  const chartX = 390;
+  const chartWidth = 630;
   rows.forEach((row, rowIndex) => {
     const rank = rowIndex + 1;
     const y = rowStart + rowIndex * rowGap;
@@ -76,7 +76,7 @@ function createSvg(rows, style, referenceLabel) {
       const value = row.allocation[category];
       const segmentWidth = chartWidth * value / 100;
       parts.push(`<rect x="${x.toFixed(2)}" y="${y}" width="${segmentWidth.toFixed(2)}" height="${barHeight}" fill="${style.colors[category]}"/>`);
-      if (value >= 3) {
+      if (value >= 3 && segmentWidth >= estimatedTextWidth(displayPercent(value), 17) + 6) {
         const color = category === "现金及其他" ? ink : "white";
         parts.push(svgText(x + segmentWidth / 2, y + 28, displayPercent(value), 17, color, 600, "middle"));
       }
